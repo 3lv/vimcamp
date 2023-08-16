@@ -2,3 +2,5 @@
 
 build/*
 !build/Makefile
+!build/vimcamp
+!build/vimcamp.exe

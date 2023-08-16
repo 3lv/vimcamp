@@ -3,6 +3,7 @@ MINOR_VERSION := 0
 VERSION := v$(MAJOR_VERSION).$(MINOR_VERSION)
 
 CXX = g++
+WINCXX = x86_64-w64-mingw32-g++
 INCPATH = -I../
 # CXXFLAGS = -Wall -Werror -Wextra -W
 CXXFLAGS = -Wall -W
@@ -10,18 +11,23 @@ CXXFLAGS = -Wall -W
 # debug build settings
 DBGCXXFLAGS = -g -DDEBUG
 
-# release buiild settings
-RELCXXFLAGS = -O3
+# release build settings
+RELCXXFLAGS = -O3 -static
 
 SOURCES = ../src/main.cpp \
 	  ../src/dict.cpp
 OBJECTS = main.o \
 	  dict.o
 TARGET  = vimcamp
+WINTARGET = vimcamp.exe
 
 .PHONY: all clean debug release
 
 all: release
+
+win: CXX = $(WINCXX)
+win: TARGET = $(WINTARGET)
+win: release
 
 debug: CXXFLAGS += $(DBGCXXFLAGS)
 debug: $(TARGET)
