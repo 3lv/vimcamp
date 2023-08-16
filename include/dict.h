@@ -33,7 +33,7 @@ public:
 	size_t number;
 	Record(std::string mode, std::string command, std::string action);
 	Record(std::string mode, std::string command, std::string action, size_t pos);
-	void modify_score(int64_t diff);
+	void add_score(int64_t diff);
 };
 
 class Dict {
@@ -47,8 +47,8 @@ private:
 	void __read();
 	void __init_score_aib();
 public:
-	mode_name mode = "Insert";
+	static mode_name mode;
 	Dict();
 	Record random();
-	void modify_score(size_t pos, int64_t score);
+	void add_score(size_t pos, int64_t score);
 };

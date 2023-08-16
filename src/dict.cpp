@@ -44,7 +44,7 @@ Aib::Aib() {
 Aib::Aib(std::vector<int64_t> *arr) {
 	size_t n = arr->size();
 	__aib = std::vector<int64_t>(n + 1, 0);
-	for(int i = 0; i < n; ++i) {
+	for(unsigned int i = 0; i < n; ++i) {
 		update(i, arr->at(i));
 	}
 }
@@ -52,13 +52,16 @@ int64_t Aib::operator[](size_t pos) {
 	return __querry(pos);
 }
 
+Dict *Record::parent = NULL;
 const int64_t Record::DEFAULT_SCORE = 1000;
 Record::Record(std::string mode, std::string command, std::string action) {
+	this->mode = mode;
 	this->command = command;
 	this->action = action;
 	score = DEFAULT_SCORE;
 }
 Record::Record(std::string mode, std::string command, std::string action, size_t number) {
+	this->mode = mode;
 	this->command = command;
 	this->action = action;
 	score = DEFAULT_SCORE;
@@ -86,13 +89,13 @@ void Dict::__read() {
 			continue;
 		}
 		std::string command;
-		size_t cmdlen = line.find('\t');
+		int cmdlen = line.find('\t');
 		if(cmdlen == -1) {
 			continue;
 		}
 		command = line.substr(0, cmdlen);
 		// find first printable char
-		size_t i = cmdlen;
+		int i = cmdlen;
 		while(line[++i] <= ' ');
 		std::string action = line.substr(i);
 		Record record(__current_mode, command, action, __dict[__current_mode].size());
@@ -108,17 +111,19 @@ void Dict::__init_score_aib() {
 		__score_aib[mode] = Aib(&scores);
 	}
 }
-void Dict::modify_score(size_t pos, int64_t score) {
+void Dict::add_score(size_t pos, int64_t score) {
 	if(__dict[mode][pos].score + score < 0) {
 		score = -__dict[mode][pos].score;
 	}
 	__dict[mode][pos].score += score;
 	__score_aib[mode].update(pos, score);
 }
+Dict::mode_name Dict::mode = "Normal";
 Dict::Dict() {
-	this->__current_mode = "Normal";
+	this->__current_mode = "None";
 	__read();
 	__init_score_aib();
+	Record::parent = this;
 }
 Record Dict::random() {
 	std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
@@ -129,4 +134,8 @@ Record Dict::random() {
 	size_t record_number = __score_aib[mode].find(random_score);
 	Record record =  __dict[mode][record_number];
 	return record;
+}
+
+void Record::add_score(int64_t diff) {
+	Record::parent->add_score(this->number, diff);
 }
