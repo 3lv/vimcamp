@@ -12,12 +12,13 @@ CXXFLAGS = -Wall -W
 DBGCXXFLAGS = -g -DDEBUG
 
 # release build settings
-RELCXXFLAGS = -O3 -static
+RELCXXFLAGS = -O3 -static -DNDEBUG
 
 SOURCES = ../src/main.cpp \
 	  ../src/dict.cpp
 OBJECTS = main.o \
 	  dict.o
+
 TARGET  = vimcamp
 WINTARGET = vimcamp.exe
 
@@ -37,7 +38,7 @@ release: $(TARGET)
 
 $(TARGET) : $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS)
-	@echo "$(TARGET) built!"
+	@echo "##### $(TARGET) built! #####"
 
 main.o:		../src/main.cpp \
 		../include/dict.h
